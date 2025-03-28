@@ -1,0 +1,177 @@
+﻿@using CoCoOnline.Models
+@{
+    
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>后台管理首页-CoCoOnline网上商城</title>
+    <script src="~/lib/easyui/jquery.min.js"></script>
+    <script src="~/lib/easyui/jquery.easyui.min.js"></script>
+    <script src="~/lib/easyui/easyui-lang-zh_cn.js"></script>
+    <link href="~/lib/easyui/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/icon.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/color.css" rel="stylesheet" />
+    <script>
+        function addTab(title, url) {
+            if ($('#tt').tabs('exists', title)) {
+                $('#tt').tabs('select', title);
+            } else {
+                var content = '<iframe scrolling="auto" frameborder="0"  src="' + url + '" style="width:100%;height:99%;"></iframe>';
+                $('#tt').tabs('add', {
+                    title: title,
+                    content: content,
+                    closable: true
+                });
+            }
+        }
+        function editPassWord() {
+            $("#addDiv").css("display", "block");
+            $("#addDiv").dialog("open").dialog('setTitle', '修改密码');
+        }
+        function saveUser() {
+            var userName = $("#userName").val();
+            var oldPwd = $("#oldPwd").val();
+            var newPwd = $("#newPwd").val();
+            var againPwd = $("#againPwd").val();
+            if (newPwd != againPwd) {
+                $.messager.alert("提示", "两次密码输入的不一致，请重新输入", "error");
+            }
+            var url = "/Home/ChangePwd/?_=" + Math.random();
+            $.get(url, { userName: userName, oldPwd: oldPwd, newPwd: newPwd, againPwd: againPwd }, function (data) {
+                if (data == "ok") {
+                    $.messager.alert("提示", "密码修改成功", "ok");
+                    $("#addDiv").dialog("close");
+                    $("#oldPwd").val("");
+                    $("#newPwd").val("");
+                    $("#againPwd").val("");
+                    window.location.href = "/login/LoginOut";
+                } else if (data == "no") {
+                    $.messager.alert("提示", "密码修改失败", "error");
+                } else if (data == "nono") {
+                    $.messager.alert("提示", "用户名与原密码不匹配", "error");
+                }
+            });
+        }
+        function collapsNorth() {
+            $('.easyui-layout').layout('collapse', 'north');
+        }
+        function collapsSouth() {
+            $('.easyui-layout').layout('collapse', 'south');
+        }
+    </script>
+    <style type="text/css">
+        body {
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+            height: 100%;
+        }
+
+        #all {
+            width: 500px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 10px;
+            border-bottom: 1px solid #0094ff;
+        }
+
+        #msg {
+            float: right;
+            font-size: 14px;
+        }
+
+        #logo {
+            float: left;
+            width: 390px;
+            height: 60px;
+        }
+
+        #left-menu ul {
+            margin: 0;
+            padding: 0;
+        }
+
+            #left-menu ul li {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                font-size: 16px;
+                line-height: 30px;
+            }
+
+        #tt .tabs-panels > .panel > .panel-body {
+            overflow: hidden;
+        }
+
+        #tt .tabs-panels > .panel > #first {
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+<body class="easyui-layout">
+    <div data-options="region:'north',border:false" style="height: 80px; background:#e0ecff; padding: 10px">
+        <div id="logo">
+            <img src="~/images/logo.gif" />
+        </div>
+        <div id="msg">
+            <span>@ViewBag.Admin.UserName</span>老师【@ViewBag.Admin.Role.RoleName】，欢迎登陆&nbsp;
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="false" onclick="editPassWord()">修改密码</a>
+            &nbsp;<a href="/Users/AdminLoginOut">退出</a>&nbsp;
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-up" plain="true" onclick="collapsNorth()"></a>
+        </div>
+    </div>
+    <div data-options="region:'west',split:true,title:'系统管理'" style="width: 220px; padding: 10px;" id="left-menu">
+        <ul>
+            <li><a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconcls="icon-add" onclick="addTab('用户管理','/Users/Index')">用户管理</a></li>
+            <li><a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconcls="icon-add" onclick="addTab('图书管理','/Books/Index')">图书管理</a></li>
+            <li><a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconcls="icon-add" onclick="addTab('图书类别管理','/Categories/Index')">图书类别管理</a></li>
+            <li><a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconcls="icon-add" onclick="addTab('订单管理','/Orders/Index')">订单管理</a></li>
+            <li><a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconcls="icon-add" onclick="addTab('出版社管理','/Publishers/Index')">出版社管理</a></li>
+            <li><a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconcls="icon-add" onclick="addTab('角色管理','/Userroles/Index')">角色管理</a></li>
+            <li><a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconcls="icon-add" onclick="addTab('用户状态管理','/Userstates/Index')">用户状态管理</a></li>
+            <li><a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconcls="icon-add" onclick="addTab('搜索管理','/Searchkeywords/Index')">搜索管理</a></li>
+            <li><a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconcls="icon-add" onclick="addTab('推荐管理','/Readercomments/Index')">推荐管理</a></li>
+        </ul>
+    </div>
+    <div data-options="region:'south',split:true,border:true" style="height: 50px; background:#e0ecff; padding: 10px; text-align: center;overflow: hidden">
+        <div style='text-align: center;'>CopyRight &copy;淄博职业学院人工智能与大数据学院</div>
+        <div style="margin-top: -20px; float: right; font-size: 14px;">
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-down" plain="true" onclick="collapsSouth()"></a>
+        </div>
+    </div>
+    <div id="tt" class="easyui-tabs" data-options="region:'center',border:false,fit:true" style="width: 100%;border: 1px solid #95B8E7; overflow: hidden">
+        <div title="首页" id="first">
+            <div id="all"></div>        
+        </div>
+    </div>
+    <div id="addDiv" class="easyui-dialog" style="width: 400px; height: 240px; padding: 10px 20px" closed="true" buttons="#addDiv-buttons">
+        <form id="fm" method="post" novalidate>
+            <div class="fitem">
+                <label>用户名:</label>
+                <input id="userName" name="userName" class="easyui-validatebox" value="ViewData["jobNumber"]" />
+            </div>
+            <div class="fitem">
+                <label>原密码:</label>
+                <input id="oldPwd" name="oldPwd" type="password" class="easyui-textbox" />
+            </div>
+            <div class="fitem">
+                <label>新密码:</label>
+                <input id="newPwd" name="newPwd" type="password" class="easyui-textbox" />
+            </div>
+            <div class="fitem">
+                <label>重复一次:</label>
+                <input id="againPwd" name="againPwd" type="password" class="easyui-textbox" />
+            </div>
+        </form>
+    </div>
+    <div id="addDiv-buttons" style="text-align: center">
+        <a href="#" class="easyui-linkbutton c6" iconcls="icon-ok" onclick="saveUser()">确定</a>
+        <a href="#" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#addDiv').dialog('close')">取消</a>
+    </div>
+</body>
+</html>

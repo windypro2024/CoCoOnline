@@ -1,0 +1,227 @@
+﻿@{
+    ViewData["Title"] = "我的当当";
+    ViewData["controller"] = "Orders";
+    ViewData["action"] = "UserIndex";
+    ViewData["LinkText"] = "我的当当";
+}
+<style type="text/css">
+    .table {
+        width: 100%;
+    }
+
+        .table tr {
+            height: 30px;
+            line-height: 30px;
+        }
+
+            .table tr:nth-child(2n) {
+                background-color: cornsilk;
+            }
+
+    .bhhead {
+        border-top: 1px solid #888;
+        border-bottom: 1px solid #888;
+        border-left: 1px solid #888;
+        background-color: darkslategray;
+        color: white;
+        text-align: center;
+    }
+
+    .bhitem {
+        border-top: 1px solid #888;
+        border-bottom: 1px solid #888;
+        border-left: 1px solid #888;
+        background-color: darkslategray;
+        color: white;
+        text-align: center;
+    }
+
+    .bhfoot {
+        border: 1px solid #888;
+        background-color: darkslategray;
+        color: white;
+        text-align: center;
+    }
+
+    .bihead {
+        border-bottom: 1px solid #888;
+        border-left: 1px solid #888;
+        text-align: center;
+    }
+
+    .biitem {
+        border-bottom: 1px solid #888;
+        border-left: 1px solid #888;
+        text-align: center;
+    }
+
+    .bifoot {
+        border-bottom: 1px solid #888;
+        border-left: 1px solid #888;
+        border-right: 1px solid #888;
+        text-align: center;
+    }
+
+    .divpage {
+        text-align: center;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .paybtn {
+        text-align: right;
+    }
+
+    .ordertitle {
+        line-height: 60px;
+        background-color: darkslategray;
+        color: white;
+        font-size: 18px;
+        padding-left: 10px;
+    }
+
+    .orderInfo {
+        height: 100px;
+        margin: 10px auto;
+    }
+
+    .itemname {
+        display: block;
+        float: left;
+        width: 80px;
+        height: 30px;
+        line-height: 30px;
+        margin-left: 10px;
+    }
+
+    .itemvalue {
+        display: block;
+        float: left;
+        width: 220px;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .itemvaluelong {
+        display: block;
+        float: left;
+        width: 520px;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .btnOrder {
+        padding-left: 400px;
+    }
+
+        .btnOrder a, .btnOrder a:visited {
+            display: block;
+            width: 130px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+            background-image: url("/Images/top-bg11.jpg");
+            border-radius: 5px;
+        }
+</style>
+<div class="ordertitle">
+    我的当当
+</div>
+@if (Model is not null)
+{
+    <div class="orderInfo">
+        <span class="itemname">用户账户：</span><span class="itemvalue">@ViewBag.Users.LoginName</span>
+        <span class="itemname">用户姓名：</span><span class="itemvalue">@ViewBag.Users.UserName</span>
+        <span class="itemname">联系电话：</span><span class="itemvalue">@ViewBag.Users.Phone</span>
+        <span class="itemname">电子邮件：</span><span class="itemvalue">@ViewBag.Users.Email</span>
+        <span class="itemname">联系地址：</span><span class="itemvaluelong">@ViewBag.Users.Address</span>
+    </div>
+    <div style="clear:both;height:0;"></div>
+    <table class="table" cellpadding="0" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="bhhead">订单编号</th>
+                <th class="bhitem">订购日期</th>
+                <th class="bhitem">订购总价</th>
+                <th class="bhitem">订单状态</th>
+                <th class="bhfoot" colspan="2">操作</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="bihead">
+                        @item.OrderId
+                    </td>
+                    <td class="biitem">
+                        @(item.OrderDate.ToString("yyyy-MM-dd"))
+                    </td>
+                    <td class="biitem">
+                        @(Math.Round(item.TotalPrice, 2))
+                    </td>
+                    <td class="biitem">
+                        @(item.OrderState==1?"未支付":"已支付")
+                    </td>
+                    <td class="biitem">
+                        <a asp-action="Detail" asp-route-id="@item.OrderId">详情</a>
+                    </td>
+                    <td class="bifoot">
+                        <a href="javascript:void(0)" onclick="deleteInfo(@item.OrderId)">删除</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="divpage">
+        共 @ViewBag.totalCount 条，第 @ViewBag.pageIndex 页/共 @ViewBag.totalPage 页 <a action="UsersIndex" asp-route-pageIndex="1">首页</a>
+        @if (ViewBag.pageIndex == 1)
+        {
+            <a asp-action="UsersIndex" style="pointer-events:none;cursor:default;color:gray;">上一页</a>
+        }
+        else
+        {
+            <a asp-action="UsersIndex" asp-route-pageIndex="@(ViewBag.pageIndex-1)">上一页</a>
+        }
+        @if (ViewBag.pageIndex == ViewBag.totalPage)
+        {
+            <a asp-action="UsersIndex" style="pointer-events:none;cursor:default;color:gray;">下一页</a>
+        }
+        else
+        {
+            <a asp-action="UsersIndex" asp-route-pageIndex="@(ViewBag.pageIndex+1)">下一页</a>
+        }
+        <a asp-action="UsersIndex" asp-route-pageIndex="@(ViewBag.totalPage)">尾页</a>
+    </div>
+}
+
+<script type="text/javascript">
+    function deleteInfo(orderId) {
+        $.messager.confirm('确认','您确认想要删除记录吗？',function(r){
+            if (r){
+               $.ajax({
+                    url: "/Orders/DeleteOrder",
+                    type: "post",
+                    data: { OrderID: orderId },
+                    success: function (data) {
+                        if(data.IntResult==2){
+                            $.messager.alert('错误', "删除失败！", 'error');
+                        }else if(data.IntResult==1){
+                            $.messager.alert('成功', "删除成功！", 'info',function(){
+                                window.location.href = "/Orders/UsersIndex";
+                            });
+                        }else if(data.IntResult==0){
+                            $.messager.alert('错误', "用户信息失效，重新登录！", 'error',function(){
+                                window.location.href = "/Users/Login";
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>

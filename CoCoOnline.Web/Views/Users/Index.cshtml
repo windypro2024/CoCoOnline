@@ -1,0 +1,225 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>用户管理</title>
+    <link href="~/lib/easyui/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/icon.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/color.css" rel="stylesheet" />
+    <script src="~/lib/easyui/jquery.min.js"></script>
+    <script src="~/lib/easyui/jquery.easyui.min.js"></script>
+    <script src="~/lib/easyui/easyui-lang-zh_cn.js"></script>
+</head>
+<body>
+    <table id="dg" title="用户列表" class="easyui-datagrid" style="width:1000px;"
+           url="/Users/GetUserList" toolbar=" #toolbar" pagination="true" method="get"
+           rownumbers="true" fitcolumns="true" selectOnCheck="true" checkOnSelect="true">
+        <thead>
+            <tr>
+                <th field="ck" checkbox="true"></th>
+                <th field="UserId" hidden="true" width="30">用户编号</th>
+                <th field="LoginName" width="30">登录名</th>
+                <th field="UserName" width="30">姓名</th>
+                <th field="Address" width="60">地址</th>
+                <th field="Phone" width="40">电话</th>
+                <th field="Email" width="40">Email</th>
+                <th field="RegDate" formatter="ChangeDateFormat" width="50">注册日期</th>
+                <th field="RoleId" hidden="true" width="30">角色编号</th>
+                <th field="RoleName" width="40">角色</th>
+                <th field="UserStateId" hidden="true" width="30">状态编号</th>
+                <th field="StateName" width="40">用户状态</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="addInfo()">添加</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="editInfo()">编辑</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="deleteInfo()">删除</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input id="searname" class="easyui-searchbox" data-options="prompt:'请输入用户名称',searcher:doSearch" style="width:300px">
+    </div>
+
+    <div id="dlg" class="easyui-dialog" style="width:400px;height:440px;padding:10px 20px"
+         closed="true" buttons="#dlg-buttons">
+        <form id="fm" method="post" novalidate>
+            <div class="fitem">
+                <input type="hidden" name="UserId" />
+                <label>登录名:</label>
+                <input name="LoginName" class="easyui-textbox" required="true" />
+            </div>
+            <div class="fitem">
+                <label>姓名:</label>
+                <input name="UserName" class="easyui-textbox" required="true" />
+            </div>
+            <div class="fitem">
+                <label>密码:</label>
+                <input name="UserPwd" class="easyui-textbox" required="true" />
+            </div>
+            <div class="fitem">
+                <label>地址:</label>
+                <input name="Address" class="easyui-textbox" required="true" />
+            </div>
+            <div class="fitem">
+                <label>电话:</label>
+                <input name="Phone" class="easyui-textbox" />
+            </div>
+            <div class="fitem">
+                <label>Email:</label>
+                <input name="Email" class="easyui-textbox" />
+            </div>
+            <div class="fitem">
+                <label>注册日期:</label>
+                <input id="RegDate" name="RegDate" class="easyui-datetimebox" />
+            </div>
+            <div class="fitem">
+                <label>角色:</label>
+                <input name="RoleId" class="easyui-combobox" style="width: 164px"
+                       data-options="valueField:'RoleId',textField:'RoleName',editable:false,
+                    url:'/Userroles/GetRoleName',required:true" />
+            </div>
+            <div class="fitem">
+                <label>用户状态:</label>
+                <input name="UserStateId" class="easyui-combobox" style="width: 164px"
+                       data-options="valueField:'UserStateId',textField:'StateName',editable:false,
+                    url:'/Userstates/GetStateName',required:true" />
+            </div>
+        </form>
+    </div>
+    <div id="dlg-buttons" style="text-align:center">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconcls="icon-ok" onclick="saveInfo()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $("#dg").datagrid({
+                onDblClickRow: function (index, row) {
+                    editInfo(index, row);
+                }
+            });
+        });
+        //搜索
+        function doSearch() {
+            $('#dg').datagrid('reload', {
+                username: $('#searname').val()
+            });
+        }
+
+        var url;
+        //显示新增页面
+        function addInfo() {
+            $('#dlg').dialog('open').dialog('setTitle', '添加用户');
+            $('#fm').form('clear');
+            url = '/Users/Add';
+        }
+        //显示编辑页面
+        function editInfo(index, row) {
+            var row = $('#dg').datagrid('getSelected');
+            if (!row || row == undefined) {
+                $.messager.alert("提示", "请选择一个需要编辑的记录", "error");
+                return;
+            }
+            $('#dlg').dialog('open').dialog('setTitle', '编辑用户');
+            $('#fm').form('load', row);
+            $("#RegDate").datetimebox('setValue',row.RegDate.replace('T',' '));
+            url = '/Users/Edit/?id=' + row.UserId;
+        }
+        //保存数据（包括新增和编辑）
+        function saveInfo() {
+            $('#fm').form('submit', {
+                url: url,
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+                    if (JSON.parse(data).IntResult==-1) {
+                        $.messager.alert('错误', "保存失败！", 'error');
+                    } else if (JSON.parse(data).IntResult==1) {
+                        $.messager.alert('成功', "保存成功！", 'info');
+                        $('#dlg').dialog('close');
+                        $('#dg').datagrid('reload');
+                    }else if(JSON.parse(data).IntResult==0){
+                        $.messager.alert('错误', "保存失败！", 'error');
+                    }
+                }
+            });
+        }
+        //批量删除
+        function deleteInfo() {
+            var rows = $('#dg').datagrid('getSelections');
+            if (!rows || rows.length == 0) {
+                $.messager.alert('提示', '请选择要删除的记录', 'info');
+                return;
+            }
+            $.messager.confirm('确认', '确认要删除吗?', function (r) {
+                if (r) {
+                    var strId = "";
+                    for (var i = 0; i < rows.length; i++) {
+                        strId = strId + rows[i].UserId + ",";
+                    }
+                    strId = strId.substring(0, strId.length - 1);
+                    $.post("/Users/Delete", { "strId": strId }, function (data) {
+                        if (JSON.parse(data).IntResult==1) {
+                            $('#dg').datagrid('reload');
+                            $('#dg').datagrid('clearSelections');
+                        }else if(JSON.parse(data).IntResult==0){
+                            $.messager.alert('错误', "删除失败！", 'error');
+                        }
+                    });
+                }
+            });
+        }
+        //将序列化成json格式转成日期格式
+        function ChangeDateFormat(cellval) {
+            if (cellval == null) {
+                return;
+            }
+            var date = new Date(cellval.replace("T", " "));
+            var month = date.getMonth() < 10 ? "0" + (date.getMonth() ) : date.getMonth() ;
+            var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+            return date.getFullYear() + "-" + month + "-" + currentDate + " " + hours + ":" + minutes + ":" + seconds;
+        }
+    </script>
+    <style type="text/css">
+        #toolbar div {
+            float: left;
+            margin-right: 100px;
+            height: 30px;
+            padding-top: 5px;
+        }
+
+        #fm {
+            margin: 0;
+            padding: 10px 30px;
+        }
+
+        .ftitle {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .fitem {
+            margin-bottom: 5px;
+        }
+
+            .fitem label {
+                display: inline-block;
+                width: 80px;
+            }
+
+            .fitem input {
+                width: 160px;
+            }
+    </style>
+</body>
+</html>

@@ -1,0 +1,72 @@
+﻿* {
+    padding: 0;
+    margin: 0;
+    font-family: "微软雅黑";
+    font-size: 14px;
+}
+
+#divmain {
+    width: 480px;
+    margin: 0 auto;
+    border: 1px solid #808080;
+    border-radius: 5px;
+}
+
+    #divmain .title {
+        padding: 10px;
+        font-size: 16px;
+        text-align: center;
+        color: red;
+        width: 85%;
+        margin-left: 5%;
+        border-bottom: 1px dashed #808080;
+        font-weight: bold;
+    }
+
+    #divmain .items {
+        line-height: 50px;
+        height: 50px;
+        clear: both;
+    }
+
+    #divmain .sptext {
+        display: block;
+        width: 180px;
+        text-align: right;
+        float: left;
+        height: 30px;
+        line-height: 30px;
+        margin-top: 15px;
+    }
+
+    #divmain .items input {
+        float: left;
+        height: 26px;        
+        margin-top: 15px;
+    }
+    #divmain .sptext2 {
+        display: block;
+        width: 200px;
+        text-align: left;
+        float: left;
+        height: 27px;
+        line-height: 27px;
+        margin-top: 15px;
+    }
+#ckTwoWeek {
+    margin-left: 200px;
+}
+
+.divbtn, .items {
+    text-align: center;
+}
+    .divbtn button {
+        width:100px;
+        height:25px;
+    }
+.blink {
+    border-bottom: 1px dashed #808080;
+    margin-bottom: 5px;
+    width: 90%;
+    margin-left: 5%;
+}

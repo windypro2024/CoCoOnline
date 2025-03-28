@@ -1,0 +1,361 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    font-family: 'Microsoft YaHei';
+}
+
+.ml5 {
+    margin-left: 5px;
+}
+
+.ml10 {
+    margin-left: 10px;
+}
+
+.mt10 {
+    margin-top: 10px;
+}
+
+.mt20 {
+    margin-top: 20px;
+}
+.mt30 {
+    margin-top: 30px;
+}
+.mt40 {
+    margin-top: 40px;
+}
+.mt50 {
+    margin-top: 50px;
+}
+
+.fl {
+    float: left;
+}
+
+.tc {
+    text-align: center;
+}
+
+.clear {
+    clear: both;
+}
+
+#divmain {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+#divhead {
+    height: 140px;
+}
+
+#logo {
+    width: 87px;
+    height: 40px;
+    background-image: url("../images/logo.gif");
+    float: left;
+    margin: 15px 15px 10px;
+}
+a:link,a:visited {
+    text-decoration:none;
+    color:black;
+}
+a:hover {
+    text-decoration:underline;
+}
+#nav {
+    float: left;
+}
+
+    #nav ul {
+        height: 31px;
+        list-style: none;
+    }
+
+        #nav ul li {
+            margin-top: 15px;
+        }
+
+            #nav ul li, #nav ul li a {
+                width: 80px;
+                display: block;
+                float: left;
+                height: 31px;
+                text-align: center;
+                line-height: 31px;
+            }
+
+                #nav ul li a {
+                    background-image: url("../images/top-bg11.jpg");
+                    text-decoration: none;
+                    color: white;
+                }
+
+#menu {
+    float: left;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+    #menu ul {
+        height: 25px;
+        list-style: none;
+    }
+
+        #menu ul li, #nav ul li a {
+            width: 80px;
+            display: block;
+            float: left;
+            height: 25px;
+            text-align: center;
+            line-height: 25px;
+        }
+
+#cate {
+    height: 70px;
+}
+
+#divfooter {
+    height: 100px;
+    text-align:center;
+}
+
+
+
+
+#left {
+    width: 180px;
+    height: 1000px;
+    float: left;
+}
+
+    #left .bookcate {
+        border: 1px solid #d5d0d0;
+        height: 550px;
+    }
+
+    #left .title, #right .title {
+        text-align: center;
+        height: 21px;
+        background-image: url("../images/index-bg-center.gif");
+        background-position-y: -1px;
+        border-radius: 5px 5px 0 0;
+        color: white;
+    }
+
+    #left .bookcate ul {
+        list-style: none;
+        margin-top: 10px;
+    }
+
+        #left .bookcate ul li {
+            display: block;
+            height: 28px;
+            line-height: 28px;
+            margin-left: 10px;
+        }
+
+            #left .bookcate ul li a, #left .bookcate ul li a:visited {
+                text-decoration: none;
+                color: #080860;
+            }
+
+                #left .bookcate ul li a:hover {
+                    text-decoration: underline;
+                }
+
+    #left .items {
+        border: 1px solid #d5d0d0;
+    }
+
+        #left .items ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+            #left .items ul li {
+                display: block;
+                height: 35px;
+                line-height: 35px;
+                margin-left: 10px;
+            }
+
+                #left .items ul li a, #right .items ul li a, #left .items ul li a:visited, #right .items ul li a:visited {
+                    text-decoration: none;
+                    color: #080860;
+                }
+
+                    #left .items ul li a:hover, #right .items ul li a:hover {
+                        text-decoration: underline;
+                    }
+
+#right {
+    width: 190px;
+    float: right;
+    height: 1000px;
+}
+
+    #right .items {
+        line-height: 35px;
+        margin-top: 5px;
+        padding: 5px;
+        border: 1px solid #d5d0d0;
+    }
+
+        #right .items ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+            #right .items ul li {
+                width: 180px;
+                line-height: 25px;
+                border-bottom: 1px dashed #b0b0b0;
+            }
+
+                #right .items ul li a {
+                    display: block;
+                    width: 190px;
+                    line-height: 25px;
+                }
+
+#middle {
+    width: 600px;
+    height: 1000px;
+    float: left;
+    margin-left: 5px;
+}
+
+    #middle .title {
+        color: #dd470f;
+        font-weight: bold;
+    }
+
+    #middle .recombookimg {
+        float: left;
+    }
+
+        #middle .recombookimg img {
+            width: 120px;
+        }
+
+.recombookimg {
+    width: 120px;
+    height: 210px;
+    float: left;
+    margin: 5px 10px;
+}
+
+    .recombookimg img {
+        width: 120px;
+        height: 210px;
+    }
+
+.recombooktitle {
+    color: #080860;
+    font-weight: bold;
+}
+
+.recombookdescribe {
+    width: 380px;
+    float: left;
+}
+
+.recombooktext {
+    text-indent: 2em;
+}
+
+.recombookprice {
+}
+
+.oldprice {
+    text-decoration: line-through;
+}
+
+.newprice {
+    padding-left: 20px;
+}
+
+.newbook {
+    width: 130px;
+    height: 125px;
+    float: left;
+    margin: 5px 10px;
+}
+
+.newbookimg {
+    text-align: center;
+}
+
+    .newbookimg img {
+        height: 110px;
+        width: 90px;
+    }
+
+.newbookprice {
+    text-align: center;
+    margin-top: 5px;
+}
+
+.hotbook {
+    width: 240px;
+    height: 110px;
+    float: left;
+    margin: 5px 30px;
+}
+
+.hotbookimg {
+    float: left;
+    height: 110px;
+    width: 90px;
+}
+
+    .hotbookimg img {
+        height: 110px;
+        width: 90px;
+    }
+
+.hotbookitem {
+    width: 150px;
+}
+
+.userItem {
+    height: 30px;
+    line-height: 30px;
+}
+    .userItem a {
+        width: 80px;
+        height: 30px
+    }
+
+#fm {
+    margin: 0;
+    padding: 10px 30px;
+}
+
+.ftitle {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.fitem {
+    margin-bottom: 5px;
+}
+
+    .fitem label {
+        display: inline-block;
+        width: 80px;
+    }
+
+    .fitem input {
+        width: 160px;
+    }
+
+#dlg-buttons {
+    text-align: center;
+}

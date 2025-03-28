@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>用户登录</title>
+    <script src="~/lib/easyui/jquery.min.js"></script>
+    <script src="~/lib/easyui/jquery.easyui.min.js"></script>
+    <script src="~/lib/easyui/easyui-lang-zh_cn.js"></script>
+    <link href="~/lib/easyui/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/css/login.css" rel="stylesheet" />
+</head>
+<body>
+    <form id="myForm" method="post" novalidate>
+        <div id="divmain">
+            <div class="title">用户登录</div>
+            <div class="items">
+                <span class="sptext">用户名：</span>
+                <input type="text" name="LoginName" class="easyui-textbox" required="true" />
+                
+            </div>
+            <div class="items">
+                <span class="sptext">密码：</span>
+                <input type="password" name="UserPwd" class="easyui-textbox" required="true" />
+            </div>
+            <div class="items">
+                <input type="checkbox" name="ckTwoWeek" id="ckTwoWeek" value="1" />
+                <span class="sptext2">2周内不用登录</span>
+            </div>
+            <div class="divbtn">
+                <input type="submit" class="easyui-linkbutton" id="btnLogin" value="登录" style="width:100px;height:30px" />
+                &nbsp;<button id="lbtnRem" class="easyui-linkbutton" asp-action="ChangePwd" asp-controller="Users" style="width:100px;height:30px">忘记密码</button>
+            </div>
+            <div class="items blink">
+                <span>您还不是网上书店用户？</span>
+                <a href="/Users/Register">注册新用户>></a>
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+            $('#myForm').form({
+            url:'/Users/CheckUser',
+            onSubmit:function(){
+                return $(this).form('validate');
+            },
+            success:function(data){
+                if(JSON.parse(data).IntResult==0){
+                    $.messager.alert('错误', "用户名或密码错误！", 'error');
+                }else if(JSON.parse(data).IntResult==1){
+                    $.messager.alert('info', "登录成功！", 'info');
+                    window.location.href = "/Home/index";
+                }
+
+                
+            }
+        });
+    </script>
+</body>
+</html>

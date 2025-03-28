@@ -1,0 +1,294 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>图书管理</title>
+    <link href="~/lib/easyui/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/icon.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/color.css" rel="stylesheet" />
+    <script src="~/lib/easyui/jquery.min.js"></script>
+    <script src="~/lib/easyui/jquery.easyui.min.js"></script>
+    <script src="~/lib/easyui/easyui-lang-zh_cn.js"></script>
+</head>
+<body>
+    <table id="dg" title="图书列表" class="easyui-datagrid" style="width:1000px;"
+           url="/Books/GetBooksList" toolbar=" #toolbar" pagination="true" method="get"
+           rownumbers="true" fitcolumns="true" selectOnCheck="true" checkOnSelect="true">
+        <thead>
+            <tr>
+                <th field="ck" checkbox="true"></th>
+                <th field="BookId" hidden="true" width="30">图书编号</th>
+                <th field="BookTitle" width="80">图书名称</th>
+                <th field="BookAuthor" width="50">作者</th>
+                <th field="PublisherId" hidden="true" width="30">出版社编号</th>
+                <th field="PublisherName" width="40">出版社</th>
+                <th field="PublishDate" formatter="ChangeDateFormat" width="30">出版日期</th>
+                <th field="UnitPrice" width="20">单价</th>
+                <th field="CategoryId" hidden="true" width="30">类别编号</th>
+                <th field="CategoryName" width="40">类别名称</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="addInfo()">添加</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="editInfo()">编辑</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="deleteInfo()">删除</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input id="searname" class="easyui-searchbox" data-options="prompt:'请输入图书名称',searcher:doSearch" style="width:300px">
+    </div>
+
+    <div id="dlg" class="easyui-dialog" style="width:710px;height:560px;padding:10px 20px"
+         closed="true" buttons="#dlg-buttons">
+        <form id="filefm" enctype="multipart/form-data" method="post" novalidate style="display:none;">
+            <label style="margin-left:25px; height:30px;">上传封面：</label>
+            <input name="bookfile" accept="image/jpeg,image/png" class="easyui-filebox"
+                   style="width:400px;height:30px;" buttonText="选择" />
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="uploadInfo()">上传</a>
+        </form>
+        <form id="fm" method="post" novalidate>
+            <div style="float: left; width: 280px; display: block;">
+                <input type="hidden" name="BookId" />
+                <div class="fitem" style="height:60px;line-height:60px;">
+                    <label style="display:block;float:left;">封面:</label>
+                    <img id="imgBookUrl" src="/images/bookcovers/7030177169.jpg"
+                         style="float:left;height:60px;width:50px;" />
+                    <input id="ihdImgUrl" type="hidden" name="ImgUrl" value="/images/bookcovers/7030177169.jpg" />
+                    <a id="alink" href="javascript:void(0)" class="easyui-linkbutton" style="width:60px;height:30px;line-height:30px;margin-left:10px;" onclick="showUp()">添加</a>
+                </div>
+
+                <div class="fitem">
+                    <label>作者:</label>
+                    <input name="BookAuthor" class="easyui-textbox" required="true" />
+                </div>
+                <div class="fitem">
+                    <label>出版社:</label>
+                    <input name="PublisherId" class="easyui-combobox" style="width: 164px"
+                           data-options="valueField:'PublisherId',textField:'PublisherName',editable:false,
+                    url:'/Publishers/GetPublisherName',required:true" />
+                </div>
+                <div class="fitem">
+                    <label>出版日期:</label>
+                    <input id="PublishDate" name="PublishDate" class="easyui-datebox" />
+                </div>
+                <div class="fitem">
+                    <label>ISBN:</label>
+                    <input name="Isbn" class="easyui-textbox" required="true" />
+                </div>
+                <div class="fitem">
+                    <label>内容摘要:</label>
+                    <input name="ContentDescription" class="easyui-textbox" multiline="true" style="height:100px" />
+                </div>
+                <div class="fitem">
+                    <label>作者简介:</label>
+                    <input name="AuthorDescription" class="easyui-textbox" multiline="true" style="height:100px" />
+                </div>
+            </div>
+            <div style="float: right; width: 280px; display: block;">
+                <div class="fitem">
+                    <label>图书名称:</label>
+                    <input name="BookTitle" class="easyui-textbox" required="true" />
+                </div>
+                <div class="fitem">
+                    <label>字数:</label>
+                    <input name="WordsCount" class="easyui-textbox" required="true" />
+                </div>
+                <div class="fitem">
+                    <label>单价:</label>
+                    <input name="UnitPrice" class="easyui-textbox" />
+                </div>
+                <div class="fitem">
+                    <label>分类名称:</label>
+                    <input name="CategoryId" class="easyui-combobox" style="width: 164px"
+                           data-options="valueField:'CategoryId',textField:'CategoryName',editable:false,
+                    url:'/Categories/GetCategoryName',required:true" />
+                </div>
+                <div class="fitem">
+                    <label>点击次数:</label>
+                    <input name="Clicks" class="easyui-textbox" />
+                </div>
+
+                <div class="fitem">
+                    <label>删除:</label>
+                    <input name="DeleteFlag" class="easyui-combobox" style="width: 164px"
+                           data-options="valueField:'valueName',textField:'textName',editable:false,
+                    data: [{textName: '是',valueName: 1	 },
+                        {textName: '否',valueName: 0}],required:true" />
+                </div>
+                <div class="fitem">
+                    <label>编辑推荐:</label>
+                    <input name="EditorComment" class="easyui-textbox" multiline="true" style="height:100px" />
+                </div>
+                <div class="fitem">
+                    <label>目录:</label>
+                    <input name="Toc" class="easyui-textbox" multiline="true" style="height:100px" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="dlg-buttons" style="text-align:center">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconcls="icon-ok" onclick="saveInfo()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $("#dg").datagrid({
+                onDblClickRow: function (index, row) {
+                    editInfo(index, row);
+                }
+            });
+        });
+        //搜索
+        function doSearch() {
+            $('#dg').datagrid('reload', {
+                searname: $('#searname').val()
+            });
+        }
+
+        var url;
+        //显示新增页面
+        function addInfo() {
+            $('#dlg').dialog('open').dialog('setTitle', '添加图书');
+            $('#fm').form('clear');
+            url = '/Books/Add';
+        }
+        //显示编辑页面
+        function editInfo(index, row) {
+            var row = $('#dg').datagrid('getSelected');
+            if (!row || row == undefined) {
+                $.messager.alert("提示", "请选择一个需要编辑的记录", "error");
+                return;
+            }
+            $('#dlg').dialog('open').dialog('setTitle', '编辑图书');
+            $('#fm').form('load', row);
+            $("#PublishDate").datebox('setValue',row.PublishDate.replace('T',' '));
+            $("#imgBookUrl").attr('src',row.ImgUrl);
+            url = '/Books/Edit/?id=' + row.BookId;
+        }
+        //保存数据（包括新增和编辑）
+        function saveInfo() {
+            $('#fm').form('submit', {
+                url: url,
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+                    if (JSON.parse(data).IntResult==-1) {
+                        $.messager.alert('错误', "保存失败！", 'error');
+                    } else if (JSON.parse(data).IntResult==1) {
+                        $.messager.alert('成功', "保存成功！", 'info');
+                        $('#dlg').dialog('close');
+                        $('#dg').datagrid('reload');
+                    }else if(JSON.parse(data).IntResult==0){
+                        $.messager.alert('错误', "保存失败！", 'error');
+                    }
+                }
+            });
+        }
+        //批量删除
+        function deleteInfo() {
+            var rows = $('#dg').datagrid('getSelections');
+            if (!rows || rows.length == 0) {
+                $.messager.alert('提示', '请选择要删除的记录', 'info');
+                return;
+            }
+            $.messager.confirm('确认', '确认要删除吗?', function (r) {
+                if (r) {
+                    var strId = "";
+                    for (var i = 0; i < rows.length; i++) {
+                        strId = strId + rows[i].BookId + ",";
+                    }
+                    strId = strId.substring(0, strId.length - 1);
+                    $.post("/Books/Delete", { "strId": strId }, function (data) {
+                        if (data.IntResult==1) {
+                            $('#dg').datagrid('reload');
+                            $('#dg').datagrid('clearSelections');
+                        }else if(data.IntResult==0){
+                            $.messager.alert('错误', "删除失败！", 'error');
+                        }
+                    });
+                }
+            });
+        }
+        function uploadInfo(){
+            $('#filefm').form('submit', {
+                url: '/Books/UploadFile',
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+                    if (JSON.parse(data).IntResult==2) {
+                        $.messager.alert('错误', JSON.parse(data).strMessage, 'error');
+                    } else if (JSON.parse(data).IntResult==1) {
+                        $.messager.alert('成功', "保存成功！", 'info');
+                        $("#filefm").hide();
+                        $('#ihdImgUrl').val(JSON.parse(data).ResultData);
+                        $('#imgBookUrl').attr('src',JSON.parse(data).ResultData);
+                    }else if(JSON.parse(data).IntResult==0){
+                        $.messager.alert('错误', JSON.parse(data).strMessage, 'error');
+                    }
+                }
+            });
+        }
+        //将序列化成json格式转成日期格式
+        function ChangeDateFormat(cellval) {
+            if (cellval == null) {
+                return;
+            }
+            var date = new Date(cellval.replace("T", " "));
+            var month = date.getMonth()+1 < 10 ? "0" + (date.getMonth()+1 ) : date.getMonth()+1 ;
+            var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            return date.getFullYear() + "-" + month + "-" + currentDate ;
+        }
+        function showUp()
+        {
+            if($("#alink").text()=="添加"){
+                $("#alink").text("隐藏");
+                $("#filefm").show();
+            }else if($("#alink").text()=="隐藏"){
+                $("#alink").text("添加");
+                $("#filefm").hide();
+            }
+
+        }
+    </script>
+    <style type="text/css">
+        #toolbar div {
+            float: left;
+            margin-right: 100px;
+            height: 30px;
+            padding-top: 5px;
+        }
+
+        #fm {
+            margin: 0;
+            padding: 10px 30px;
+        }
+
+        .ftitle {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .fitem {
+            margin-bottom: 5px;
+        }
+
+            .fitem label {
+                display: inline-block;
+                width: 80px;
+            }
+
+            .fitem input {
+                width: 160px;
+            }
+    </style>
+</body>
+</html>

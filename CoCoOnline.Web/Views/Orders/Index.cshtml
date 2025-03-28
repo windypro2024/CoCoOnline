@@ -1,0 +1,231 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>订单管理</title>
+    <link href="~/lib/easyui/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/icon.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/color.css" rel="stylesheet" />
+    <script src="~/lib/easyui/jquery.min.js"></script>
+    <script src="~/lib/easyui/jquery.easyui.min.js"></script>
+    <script src="~/lib/easyui/datagrid-detailview.js"></script>
+    <script src="~/lib/easyui/easyui-lang-zh_cn.js"></script>
+</head>
+<body>
+    <table id="dg" title="订单列表" class="easyui-datagrid" style="width:1000px;"
+           url="/Orders/GetOrderList" toolbar=" #toolbar" pagination="true" method="get"
+           rownumbers="true" fitcolumns="true" selectOnCheck="true" checkOnSelect="true">
+        <thead>
+            <tr>
+                <th field="ck" checkbox="true"></th>
+                <th field="OrderId" hidden="true" width="30">订单编号</th>
+                <th field="UserName" width="50">姓名</th>
+                <th field="TotalPrice" width="50">总价</th>
+                <th field="UserId" hidden="true" width="30">用户编号</th>
+                <th field="OrderDate" formatter="ChangeDateFormat" width="30">订单日期</th>
+                <th field="OrderState" formatter="ChangeOrderState" width="40">订单状态</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="editInfo()">编辑</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="deleteInfo()">删除</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input id="searname" class="easyui-searchbox" data-options="prompt:'请输入姓名',searcher:doSearch" style="width:300px">
+    </div>
+
+    <div id="dlg" class="easyui-dialog" style="width:400px;height:380px;padding:10px 20px"
+         closed="true" buttons="#dlg-buttons">
+        <form id="fm" method="post" novalidate>
+            <div class="fitem">
+                <input type="hidden" name="OrderId" />
+                <input type="hidden" name="UserId" />
+                <label>姓名:</label>
+                <input name="UserName" class="easyui-textbox" required="true" readonly="readonly" />
+            </div>
+            <div class="fitem">
+                <label>总价:</label>
+                <input name="TotalPrice" class="easyui-textbox" required="true" readonly="readonly" />
+            </div>
+
+            <div class="fitem">
+                <label>订单状态:</label>
+                <input name="OrderState" class="easyui-combobox" required="true" style="width: 164px"
+                       data-options="valueField:'valueName',textField:'textName',editable:false,
+                    data: [{textName: '未支付',valueName: 0	 },{textName: '已支付',valueName: 1},{textName: '已发货',valueName: 2}],required:true" />
+            </div>
+
+            <div class="fitem">
+                <label>订单日期:</label>
+                <input id="OrderDate" name="OrderDate" class="easyui-datetimebox" readonly="readonly" />
+            </div>            
+        </form>
+    </div>
+    <div id="dlg-buttons" style="text-align:center">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconcls="icon-ok" onclick="saveInfo()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $("#dg").datagrid({
+                view: detailview,
+                onDblClickRow: function (index, row) {
+                    editInfo(index, row);
+                },detailFormatter: function (index, row) {
+                    return '<div style="padding:2px"><table class="ddv"></table></div>';
+                },onExpandRow: function (index, row) {
+                    var ddv = $(this).datagrid('getRowDetail', index).find('table.ddv');
+                    ddv.datagrid({
+                        url: '/Orderbooks/GetOrderBookList/?OrderId=' + row.OrderId,
+                        fitColumns: true,
+                        singleSelect: true,
+                        rownumbers: true,
+                        pagination: true,
+                        loadMsg: '',
+                        height: 'auto',
+                        columns: [[
+                            { field: 'Id', title: '图书订单编号', width: 30, hidden: true },
+                            { field: 'OrderID', title: '订单编号', width: 30, align: 'center', hidden: true },
+                            { field: 'BookID', title: '图书编号', width: 50, align: 'center',hidden: true },
+                            { field: 'BookTitle', title: '图书名称', width: 80, align: 'center' },
+                            { field: 'UnitPrice', title: '单价', width: 30, align: 'center' },
+                            { field: 'Quantity', title: '数量', width: 30, align: 'center' },
+                            { field: 'TotalPrice', title: '合计', width: 40, align: 'center' }
+                        ]]
+                    });
+                    $('#dg').datagrid('fixDetailRowHeight', index);
+                }
+            });
+        });
+        //搜索
+        function doSearch() {
+            $('#dg').datagrid('reload', {
+                searname: $('#searname').val()
+            });
+        }
+
+        var url;        
+        //显示编辑页面
+        function editInfo(index, row) {
+            var row = $('#dg').datagrid('getSelected');
+            if (!row || row == undefined) {
+                $.messager.alert("提示", "请选择一个需要编辑的记录", "error");
+                return;
+            }
+            $('#dlg').dialog('open').dialog('setTitle', '编辑订单');
+            $('#fm').form('load', row);
+            $("#OrderDate").datetimebox('setValue',row.OrderDate.replace('T',' '));
+            url = '/Orders/Edit/?id=' + row.OrderId;
+        }
+        //保存数据（包括新增和编辑）
+        function saveInfo() {
+            $('#fm').form('submit', {
+                url: url,
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+                    if (JSON.parse(data).IntResult==-1) {
+                        $.messager.alert('错误', "保存失败！", 'error');
+                    } else if (JSON.parse(data).IntResult==1) {
+                        $.messager.alert('成功', "保存成功！", 'info');
+                        $('#dlg').dialog('close');
+                        $('#dg').datagrid('reload');
+                    }else if(JSON.parse(data).IntResult==0){
+                        $.messager.alert('错误', "保存失败！", 'error');
+                    }
+                }
+            });
+        }
+        //批量删除
+        function deleteInfo() {
+            var rows = $('#dg').datagrid('getSelections');
+            if (!rows || rows.length == 0) {
+                $.messager.alert('提示', '请选择要删除的记录', 'info');
+                return;
+            }
+            $.messager.confirm('确认', '确认要删除吗?', function (r) {
+                if (r) {
+                    var strId = "";
+                    for (var i = 0; i < rows.length; i++) {
+                        strId = strId + rows[i].OrderId + ",";
+                    }
+                    strId = strId.substring(0, strId.length - 1);
+                    $.post("/Orders/Delete", { "strId": strId }, function (data) {
+                        if (JSON.parse(data).IntResult==1) {
+                            $.messager.alert('成功', "删除成功！", 'info');
+                            $('#dg').datagrid('reload');
+                            $('#dg').datagrid('clearSelections');
+                        }else if(JSON.parse(data).IntResult==0){
+                            $.messager.alert('错误', "删除失败！", 'error');
+                        }
+                    });
+                }
+            });
+        }
+        
+        //将序列化成json格式转成日期格式
+        function ChangeDateFormat(cellval) {
+            if (cellval == null) {
+                return;
+            }
+            var date = new Date(cellval.replace("T", " "));
+            var month = date.getMonth()+1 < 10 ? "0" + (date.getMonth()+1 ) : date.getMonth()+1 ;
+            var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            return date.getFullYear() + "-" + month + "-" + currentDate ;
+        }  
+        function ChangeOrderState(cellval){
+            if (cellval == null) {
+                return;
+            }
+            var orderstate=Number(cellval);
+            switch(orderstate){
+                case 0:
+                    return "未支付";
+                case 1:
+                    return "已支付";
+                case 2:
+                    return "已发货";
+            }
+        }
+    </script>
+    <style type="text/css">
+        #toolbar div {
+            float: left;
+            margin-right: 100px;
+            height: 30px;
+            padding-top: 5px;
+        }
+
+        #fm {
+            margin: 0;
+            padding: 10px 30px;
+        }
+
+        .ftitle {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .fitem {
+            margin-bottom: 5px;
+        }
+
+            .fitem label {
+                display: inline-block;
+                width: 80px;
+            }
+
+            .fitem input {
+                width: 160px;
+            }
+    </style>
+</body>
+</html>

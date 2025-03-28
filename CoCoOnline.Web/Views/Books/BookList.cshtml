@@ -1,0 +1,126 @@
+﻿@model IEnumerable<CoCoOnline.Models.Books>
+
+@{
+    ViewData["Title"] = "图书列表";
+    ViewData["controller"] = "Books";
+    ViewData["action"] = "BookList";
+    ViewData["LinkText"] = "图书列表";
+}
+<style type="text/css">
+    .table {
+    width: 100%;
+    }
+
+    .table tr {
+    height: 30px;
+    line-height: 30px;
+    }
+
+    .table tr:nth-child(2n) {
+    background-color: cornsilk;
+    }
+
+    .bhhead {
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #888;
+    border-left: 1px solid #888;
+    background-color: darkslategray;
+    color: white;
+    }
+
+    .bhitem {
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #888;
+    border-left: 1px solid #888;
+    background-color: darkslategray;
+    color: white;
+    }
+
+    .bhfoot {
+    border: 1px solid #888;
+    background-color: darkslategray;
+    color: white;
+    }
+
+    .bihead {
+    border-bottom: 1px solid #888;
+    border-left: 1px solid #888;
+    text-align: center;
+    }
+
+    .biitem {
+    border-bottom: 1px solid #888;
+    border-left: 1px solid #888;
+    text-align: center;
+    }
+
+    .bifoot {
+    border-bottom: 1px solid #888;
+    border-left: 1px solid #888;
+    border-right: 1px solid #888;
+    text-align: center;
+    }
+
+    .divpage {
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    }
+</style>
+<table class="table" cellpadding="0" cellspacing="0">
+    <thead>
+        <tr>
+            <th class="bhhead">书名</th>
+            <th class="bhitem">作者</th>
+            <th class="bhitem">出版社</th>
+            <th class="bhitem">单价</th>
+            <th class="bhitem">出版日期</th>
+            <th class="bhfoot">浏览</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="bihead">
+                    <a asp-action="Details" asp-route-id="@item.BookId">@(item.BookTitle.Length > 21 ? item.BookTitle.Substring(0, 21) + "..." : item.BookTitle)</a>
+                </td>
+                <td class="biitem">
+                    @(item.BookAuthor.Length > 12 ? item.BookAuthor.Substring(0, 12) + "..." : item.BookAuthor)
+                </td>
+                <td class="biitem">
+                    @item.Publisher.PublisherName
+                </td>
+                <td class="biitem">
+                    @(Math.Round(item.UnitPrice, 2))
+                </td>
+                <td class="biitem">
+                    @(item.PublishDate.ToString("yyyy-MM-dd"))
+                </td>
+                <td class="bifoot">
+                    <a asp-action="Details" asp-route-id="@item.BookId">详情</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="divpage">
+    共 @ViewBag.totalCount 条，第 @ViewBag.pageIndex 页/共 @ViewBag.totalPage 页 <a action="BookList" asp-route-pageIndex="1">首页</a>
+    @if (ViewBag.pageIndex == 1)
+    {
+        <a asp-action="BookList" asp-route-cid="@ViewBag.cid" asp-route-pid="@ViewBag.pid" style="pointer-events:none;cursor:default;color:gray;">上一页</a>
+    }
+    else
+    {
+        <a asp-action="BookList" asp-route-cid="@ViewBag.cid" asp-route-pid="@ViewBag.pid" asp-route-pageIndex="@(ViewBag.pageIndex-1)">上一页</a>
+    }
+    @if (ViewBag.pageIndex == ViewBag.totalPage)
+    {
+        <a asp-action="BookList" asp-route-cid="@ViewBag.cid" asp-route-pid="@ViewBag.pid" style="pointer-events:none;cursor:default;color:gray;">下一页</a>
+    }
+    else
+    {
+        <a asp-action="BookList" asp-route-cid="@ViewBag.cid" asp-route-pid="@ViewBag.pid" asp-route-pageIndex="@(ViewBag.pageIndex+1)">下一页</a>
+    }
+    <a asp-action="BookList" asp-route-cid="@ViewBag.cid" asp-route-pid="@ViewBag.pid" asp-route-pageIndex="@(ViewBag.totalPage)">尾页</a>
+</div>

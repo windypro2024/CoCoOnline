@@ -1,0 +1,6 @@
+@CoCoOnline.API_HostAddress = http://localhost:5266
+
+GET {{CoCoOnline.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

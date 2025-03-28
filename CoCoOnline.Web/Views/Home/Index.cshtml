@@ -1,0 +1,168 @@
+﻿@using CoCoOnline.Models
+@{
+    Layout = Layout;
+    ViewData["Title"] = "首页";
+    ViewData["controller"] = "Home";
+    ViewData["action"] = "Index";
+    ViewData["LinkText"] = "商城首页";
+}
+<div id="left">
+    <div class="bookcate">
+        <div class="title">
+            图书分类
+        </div>
+        <ul>
+            @foreach (var cate in Model.Categories)
+            {
+                <li>
+                    <a href='/Books/BookList/?cid=@cate.CategoryId'>
+                        <img src='~/images/book_cate_icon.gif' alt='' /> @cate.CategoryName
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="title mt20">
+        品牌出版商
+    </div>
+    <div class="items">
+        <ul>
+            @foreach (var pub in Model.Publishers)
+            {
+                <li>
+                    <a href='/Books/BookList/?pid=@pub.PublisherId'>@pub.PublisherName </a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+<div id="middle">
+    <div class="title ml5">
+        <img src="~/images/index-arrow.gif" alt="" />
+        最全的图书、最低的价格尽在可可网
+    </div>
+    <div class="recombookimg">
+        <a href="/Books/Details/@Model.LastBook.BookId">
+            <img src="@Model.LastBook.ImgUrl" />
+        </a>
+    </div>
+
+    <div class="recombookdescribe mt20">
+        <div class="recombooktitle">
+            <a href="/Books/Details/@Model.LastBook.BookId">
+                @Model.LastBook.BookTitle
+            </a>
+        </div>
+        <div class="recombooktext">
+            @Html.Raw(Model.LastBook.ContentDescription)
+        </div>
+        <div class="recombookprice">
+            <span class="oldprice">原价：@((Model.LastBook.UnitPrice).ToString("F2"))元</span>
+            <span class="newprice">折扣价：@((Model.LastBook.UnitPrice * 0.8m).ToString("F2"))元</span>
+        </div>
+    </div>
+
+    <div class="clear mt10"></div>
+    <div class="title ml5 mt20">
+        <img src="~/images/index-arrow.gif" alt="" />
+        本月最新出版 最新最热全收录，最佳品质、最优价格
+    </div>
+    <div>
+        @foreach (var newbook in Model.NewBooks)
+        {
+            var booktitle = newbook.BookTitle.Length > 9 ? newbook.BookTitle.Substring(0, 9) + "..." : newbook.BookTitle;
+            <div class='newbook'>
+                <div class='newbookimg'>
+                    <a href='/Books/Details/@newbook.BookId'><img src='@newbook.ImgUrl' /></a>
+                </div>
+                <div class='newbookprice'>@booktitle</div>
+            </div>
+        }
+
+    </div>
+    <div class="clear"></div>
+    <div class="title ml5 mt20">
+        <img src="~/images/index-arrow.gif" alt="" />
+        本周媒体热点 最热图书全场打折、天天特价
+    </div>
+    @foreach (var oldbook in Model.OldBooks)
+    {
+        var booktitle = oldbook.BookTitle.Length > 29 ?
+        oldbook.BookTitle.Substring(0, 29) + "..." : oldbook.BookTitle;
+        <div class='hotbook'>
+            <div class='hotbookimg'>
+                <a href='/Books/Details/@oldbook.BookId'><img src='@oldbook.ImgUrl' /></a>
+            </div>
+            <div class='hotbookitem fl'>
+                <div class='tc mt10'><a href='/Books/Details/@oldbook.BookId'>@booktitle</a></div>
+                <div class='tc mt10'>￥@((oldbook.UnitPrice).ToString("F2"))</div>
+            </div>
+        </div>
+    }
+
+</div>
+<div id="right">
+    <div class="title">
+        用户登录
+    </div>
+    <div class="items" id="divUserinfo">
+        @ViewBag.DynamicHtml
+        @* <form id="myForm" method="post" novalidate@ViewBag.DynamicHtml>
+            <div style="height: 340px;">
+                Email地址或昵称:<br />
+                <input type="text" name="LoginName" class="easyui-textbox" required="true" />
+                密码:<br />
+                <input type="password" name="UserPwd" class="easyui-textbox" required="true" />
+                <span id="spwelcome"></span>
+                <br />
+                <a class="easyui-linkbutton" href="/Home/CheckUser" style="width:80px;">登录</a><br />
+                你不是可可网用户？<br />
+                <a href="/Users/Register">创建一个新用户>></a>
+            </div>
+        </form> *@
+
+        @*<div style="height: 340px;@ViewBag.DynamicHtml">
+            <div class="userItem mt30">欢迎：<span style="color:dodgerblue">admin</span></div>
+            <div class="userItem mt5">登录日期：<br /><span>2025/3/10 15:33:20</span></div>
+            <div class="userItem mt20">登录IP：<br /><span>192.168.100.100</span></div>
+            <div class="userItem mt40">
+                <a class=" easyui-linkbutton" href="/Users/LoginOut">注销</a>
+                <a class=" easyui-linkbutton" onclick="showInfo()">修改密码</a>
+            </div>
+        </div> *@
+    </div>
+    <div>
+        <div class="title mt20">
+            点击排行 top 10
+        </div>
+        <div class="items" style="margin-top:0">
+            <ul>
+                @foreach (var clickbook in Model.ClickBooks)
+                {
+                    var booktitle = clickbook.BookTitle.Length > 32 ?
+                    clickbook.BookTitle.Substring(0, 32) + "..." : clickbook.BookTitle;
+                    <li>
+                        <a href='/Books/Details/@clickbook.BookId'> @booktitle </a>
+
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#myForm').form({
+        url:'/Home/CheckUser',
+        onSubmit:function(){
+            return $(this).form('validate');
+        },
+        success:function(data){
+            if(JSON.parse(data).IntResult==0){
+                $.messager.alert('错误', "用户名或密码错误！", 'error');
+            }else if(JSON.parse(data).IntResult==1){
+                window.location.href = "/Home/index";
+            }
+
+        }
+    });    
+</script>

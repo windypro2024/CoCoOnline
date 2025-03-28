@@ -1,0 +1,240 @@
+﻿@{
+    ViewData["Title"] = "购物车";
+    ViewData["controller"] = "Books";
+    ViewData["action"] = "ShoppingCart";
+    ViewData["LinkText"] = "购物车";
+}
+<style type="text/css">
+    .table {
+        width: 100%;
+    }
+
+        .table tr {
+            height: 30px;
+            line-height: 30px;
+        }
+
+            .table tr:nth-child(2n) {
+                background-color: cornsilk;
+            }
+
+    .bhhead {
+        border-top: 1px solid #888;
+        border-bottom: 1px solid #888;
+        border-left: 1px solid #888;
+        background-color: darkslategray;
+        color: white;
+        text-align: center;
+    }
+
+    .bhitem {
+        border-top: 1px solid #888;
+        border-bottom: 1px solid #888;
+        border-left: 1px solid #888;
+        background-color: darkslategray;
+        color: white;
+        text-align: center;
+    }
+
+    .bhfoot {
+        border: 1px solid #888;
+        background-color: darkslategray;
+        color: white;
+        text-align: center;
+    }
+
+    .bihead {
+        border-bottom: 1px solid #888;
+        border-left: 1px solid #888;
+        text-align: center;
+    }
+
+    .biitem {
+        border-bottom: 1px solid #888;
+        border-left: 1px solid #888;
+        text-align: center;
+    }
+
+    .bifoot {
+        border-bottom: 1px solid #888;
+        border-left: 1px solid #888;
+        border-right: 1px solid #888;
+        text-align: center;
+    }
+
+    .divpage {
+        text-align: center;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .paybtn {
+        text-align: right;
+    }
+</style>
+<div class="title">
+    <img alt="" src="/Images/shopping.gif" /><br />
+    您选好的商品：
+</div>
+<table class="table" cellpadding="0" cellspacing="0">
+    <thead>
+        <tr>
+            <th class="bhhead">图书编号</th>
+            <th class="bhhead">图书名称</th>
+            <th class="bhitem">单价</th>
+            <th class="bhitem">数量</th>
+            <th class="bhitem">合计</th>
+            <th class="bhfoot" colspan="2">操作</th>
+        </tr>
+    </thead>
+    @if (Model is not null)
+    {
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="bihead">
+                        @item.BookId
+                    </td>
+                    <td class="biitem">
+                        <a asp-action="Details" asp-route-id="@item.BookId">@(item.BookTitle.Length > 30 ? item.BookTitle.Substring(0, 30) + "..." : item.BookTitle)</a>
+                    </td>
+                    <td class="biitem">
+                        @(Math.Round(item.UnitPrice, 2))
+                    </td>
+                    <td class="biitem">
+                        @item.Quantity
+                    </td>
+                    <td class="biitem">
+                        @(Math.Round(item.TotalPrice, 2))
+                    </td>
+                    <td class="bifoot">
+                        <a onclick="showInfo(@item.BookId)" href="javascript:void(0)">编辑</a>
+                    </td>
+                    <td class="bifoot">
+                        <a onclick="deleteInfo(@item.BookId)" href="javascript:void(0)">删除</a>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td class="bhhead" colspan="3">合计：</td>
+                <td class="bhitem">@ViewBag.cartTotal</td>
+                <td class="bhfoot" colspan="3">@(Math.Round(ViewBag.totalPrice, 2))</td>
+            </tr>
+        </tbody>
+    }
+</table>
+@if (Model is not null)
+{
+    <div class="divpage">
+        共 @ViewBag.totalCount 条，第 @ViewBag.pageIndex 页/共 @ViewBag.totalPage 页 <a action="ShoppingCart" asp-route-pageIndex="1">首页</a>
+        @if (ViewBag.pageIndex == 1)
+        {
+            <a asp-action="ShoppingCart" style="pointer-events:none;cursor:default;color:gray;">上一页</a>
+        }
+        else
+        {
+            <a asp-action="ShoppingCart" asp-route-pageIndex="@(ViewBag.pageIndex-1)">上一页</a>
+        }
+        @if (ViewBag.pageIndex == ViewBag.totalPage)
+        {
+            <a asp-action="ShoppingCart" style="pointer-events:none;cursor:default;color:gray;">下一页</a>
+        }
+        else
+        {
+            <a asp-action="ShoppingCart" asp-route-pageIndex="@(ViewBag.pageIndex+1)">下一页</a>
+        }
+        <a asp-action="ShoppingCart" asp-route-pageIndex="@(ViewBag.totalPage)">尾页</a>
+    </div>
+}
+<div class="paybtn"> <a asp-controller="Orders" asp-action="Balance"><img src="/Images/balance.gif" /></a></div>
+<div id="dlg" class="easyui-dialog" style="width:400px;height:260px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons">
+    <form id="myfm" method="post" novalidate>
+        <div class="fitem">
+            <label>书名:</label>
+            <input id="hdBookId" name="BookId" type="hidden" />
+            <input type="text" id="BookTitle" name="BookTitle" class="easyui-textbox" readonly="readonly" />
+        </div>
+        <div class="fitem">
+            <label>单价:</label>
+            <input type="text" id="UnitPrice" name="UnitPrice" class="easyui-textbox" readonly="readonly" />
+        </div>
+        <div class="fitem">
+            <label>数量:</label>
+            <input type="text" min="1" id="Quantity" name="Quantity" class="easyui-numberspinner" required="true" />
+        </div>
+        <div id="dlg-buttons">
+            <a href="javascript:void(0)" class="easyui-linkbutton c6" iconcls="icon-ok" onclick="saveInfo()" style="width:90px">保存</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    function showInfo(bookID){
+        $.get("/Books/GetShopCart",{BookID:bookID},function(book){
+            if  (book.IntResult==0){
+                $.messager.alert('错误', "用户信息失效，重新登录！", 'error',function(){
+                        window.location.href = "/Users/Login";
+                    });
+            }else if(book.IntResult==2){
+                $.messager.alert('错误', "数据错误！", 'error');
+            }else if(book.IntResult==1){
+                $('#dlg').dialog('open').dialog('setTitle', '修改图书数量');
+                $('#fm').form('clear');
+                $("#hdBookId").val(book.ResultData.BookId);
+                $("#BookTitle").textbox("setValue",book.ResultData.BookTitle);
+                $("#UnitPrice").textbox("setValue",book.ResultData.UnitPrice);
+                $("#Quantity").textbox("setValue",book.ResultData.Quantity);
+            }
+        });
+    }
+    function saveInfo(){
+        var bookid=$("#hdBookId").val();
+        $('#myfm').form('submit', {
+            url: '/Books/UpdateCart',
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function (data) {
+                if(JSON.parse(data).IntResult==2){
+                    $.messager.alert('错误', "修改失败！", 'error');
+                }else if(JSON.parse(data).IntResult==1){
+                    $('#dlg').dialog('close');
+                    $.messager.alert('成功', "修改成功！", 'info',function(){
+                        window.location.href = "/Books/ShoppingCart";
+                    });
+                }else if(JSON.parse(data).IntResult==0){
+                    $.messager.alert('错误', "用户信息失效，重新登录！", 'error',function(){
+                        window.location.href = "/Users/Login";
+                    });
+                }
+            }
+        });
+    }
+    function deleteInfo(bookid){
+        $.messager.confirm('确认','您确认想要删除记录吗？',function(r){
+            if (r){
+               $.ajax({
+                    url: "/Books/DeleteCart",
+                    type: "post",
+                    data: { BookID: bookid },
+                    success: function (data) {
+                        if(data.IntResult==2){
+                            $.messager.alert('错误', "删除失败！", 'error');
+                        }else if(data.IntResult==1){
+                            $.messager.alert('成功', "删除成功！", 'info',function(){
+                                window.location.href = "/Books/ShoppingCart";
+                            });
+                        }else if(data.IntResult==0){
+                            $.messager.alert('错误', "用户信息失效，重新登录！", 'error',function(){
+                                window.location.href = "/Users/Login";
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>

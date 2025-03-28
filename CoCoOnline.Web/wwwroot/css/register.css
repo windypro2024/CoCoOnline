@@ -1,0 +1,42 @@
+﻿
+* {
+    padding: 0;
+    margin: 0;
+    font-family: "微软雅黑";
+    font-size: 14px;
+}
+
+.divmain {
+    width: 480px;
+    margin: 0 auto;
+    border: 1px solid #808080;
+    border-radius: 5px;
+    height:370px;
+}
+.divmain .title {
+    padding: 10px;
+    font-size: 16px;
+    text-align: center;
+    color: red;
+    width: 85%;
+    margin-left: 5%;
+    border-bottom: 1px dashed #808080;
+    font-weight: bold;
+}
+    .divmain .form-group {
+        height:35px;
+        line-height:35px;
+    }
+    .divmain .control-label {
+        display: block;
+        width: 150px;
+        text-align: right;
+        float: left;
+    }
+    .divmain input {
+        float:left;
+    }
+    .divmain .form-group input {
+        margin-left:180px;
+        margin-top:10px;
+    }

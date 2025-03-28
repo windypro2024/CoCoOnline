@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]-CoCoOnline网上书城</title>
+    <link href="~/css/homeindex.css" rel="stylesheet" />
+    <script src="~/lib/easyui/jquery.min.js"></script>
+    <script src="~/lib/easyui/jquery.easyui.min.js"></script>
+    <script src="~/lib/easyui/easyui-lang-zh_cn.js"></script>
+    <link href="~/lib/easyui/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/icon.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/color.css" rel="stylesheet" />
+    <script type="text/javascript">
+        function showInfo(){
+        $('#dlg').dialog('open').dialog('setTitle', '修改密码');
+            $('#fm').form('clear');
+
+        }
+        function saveInfo(){
+            if($("#NewUserPwd").val()!=$("#ReUserPwd").val()){
+                $.messager.alert('错误', "新密码和重复密码输入不一致！", 'error');
+                return;
+            }
+            $('#fm').form('submit', {
+                url: '/Users/ChangePwd',
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+                    if(JSON.parse(data).IntResult==0){
+                            $.messager.alert('错误', "原密码错误！", 'error');
+                        }else if(JSON.parse(data).IntResult==1){
+                            $.messager.alert('info', "修改成功！", 'info');
+                            window.location.href = "/Users/Login";
+                        }else if(JSON.parse(data).IntResult==2){
+                            $.messager.alert('错误', "新密码和重复密码输入不一致！", 'error');
+                        }else if(JSON.parse(data).IntResult==-1){
+                            $.messager.alert('错误', "用户信息失效，重新登录！", 'error');
+                            window.location.href = "/Users/Login";
+                        }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="divmain">
+        <div id="divhead">
+
+            <div id="logo"></div>
+            <div id="nav">
+                <ul>
+                    <li><a href="/Home/Index">首页</a></li>
+                    <li><a asp-controller="Orders" asp-action="UsersIndex">我的当当</a></li>
+                    <li><a href="/Books/BookList">图书分类</a></li>
+                </ul>
+            </div>
+            <div id="menu">
+                <ul>
+                    <li>
+                        <a href="/Books/ShoppingCart">
+                            <img src="~/images/top-gwc.gif" />
+                            购物车
+                        </a>
+                    </li>
+                    <li><a href="#">帮助</a></li>
+                    <li><a href="/Users/Register">新用户注册</a></li>
+                    <li><a href="/Users/Login">登录</a></li>
+                    <li><a href="#" onclick="showInfo()">修改密码</a></li>
+                </ul>
+            </div>
+            <div style="border-bottom: 1px solid #808080; clear: both; width: 100%; margin-left: 0;"></div>
+            <div id="cate">
+                <div style="width: 14px; height: 85px; float: left;">
+                    <img src="/images/sousuo_01.gif" />
+                </div>
+                <div style="float: left; width: 490px; height: 85px;">
+                    <div style="line-height: 43px; background-image: url('/Images/sousuo_02.gif')">图书分类：程序设计 | Web开发 | 数据库管理</div>
+                    <div style="line-height: 42px; background-image: url('/images/sousuo_09.gif')">现在位置：<a href="/@ViewData["controller"]/@ViewData["action"]">@ViewData["LinkText"]</a></div>
+                </div>
+                <div style="float: left; width: 480px; height: 85px;">
+                    <div style="background-image: url('/images/sousuo_05.gif'); width: 49px; height: 43px; float: left;"></div>
+                    <div style="float: left; width: 431px; line-height: 43px; background-image: url('/images/sousuo_07.gif');">热门搜索词：C# | ASP.NET | SQL Server</div>
+                    <div style="float: left; width: 480px; line-height: 42px; background-image: url('/images/sousuo_09.gif');">
+                        图书搜索：<input id="txtBookQuery" />
+                        &nbsp;<button id="btnSearch" style="width:80px;">搜索</button>
+                        &nbsp;|
+                        <button id="btnUpSearch" style="width:80px;">高级搜索</button>
+                    </div>
+                </div>
+                <div style="width: 14px; height: 85px; float: left;">
+                    <img src="~/images/sousuo_08.gif" />
+                </div>
+                <div class="clear"></div>
+            </div>
+
+        </div>
+        <div id="divbody">
+            @RenderBody()
+        </div>
+        <div id="divfooter">
+            <div>
+                <img src="~/images/index-end.jpg" style="width:1010px;margin-left:-5px;" />
+            </div>
+            <div class="copyright">Copyright 可可网 &copy;2025,All Right Reserved.Powered  By Zbvc</div>
+        </div>
+    </div>
+    <div id="dlg" class="easyui-dialog" style="width:400px;height:260px;padding:10px 20px"
+         closed="true" buttons="#dlg-buttons">
+        <form id="fm" method="post" novalidate>
+            <div class="fitem">
+                <label>原密码:</label>
+                <input type="password" name="UserPwd" class="easyui-textbox" required="true" />
+            </div>
+            <div class="fitem">
+                <label>新密码:</label>
+                <input type="password" id="NewUserPwd" name="NewUserPwd" class="easyui-textbox" required="true" />
+            </div>
+            <div class="fitem">
+                <label>重复密码:</label>
+                <input type="password" id="ReUserPwd" name="ReUserPwd" class="easyui-textbox" required="true" />
+            </div>
+            <div id="dlg-buttons">
+                <a href="javascript:void(0)" class="easyui-linkbutton c6" iconcls="icon-ok" onclick="saveInfo()" style="width:90px">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

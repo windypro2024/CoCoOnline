@@ -1,0 +1,152 @@
+﻿@model CoCoOnline.Models.Books
+
+@{
+    ViewData["Title"] = "图书详细";
+    ViewData["controller"] = "Books";    
+    ViewData["LinkText"] = "图书详细";
+}
+<style type="text/css">
+    .fl {
+        float: left;
+    }
+
+    .rl {
+        float: right;
+    }
+
+    .cl {
+        clear: both;
+    }
+
+    .line {
+        border-bottom: 1px solid gray;
+    }
+
+    .ml60 {
+        margin-left: 60px;
+    }
+
+    .title {
+        font-size: 18px;
+        color: darkblue;
+        font-weight: bold;
+        height: 40px;
+        line-height: 40px;
+        width:740px;
+    }
+
+    .item .spleft {
+        display: block;
+        width: 100px;
+        line-height: 25px;
+        height: 25px;
+    }
+
+    .item .spright {
+        display: block;
+        width: 440px;
+        line-height: 25px;
+        height: 25px;
+    }
+
+    .item .spleft2 {
+        display: block;
+        width: 80px;
+        line-height: 25px;
+        height: 25px;
+    }
+
+    .item .spright2 {
+        display: block;
+        width: 100px;
+        line-height: 25px;
+        height: 25px;
+    }
+
+    .dvbooksdetail .dvimg img {
+        width: 200px;
+        height: 280px;
+    }
+
+    .w100 {
+        width: 100px;
+    }
+
+    .dvprice {
+        line-height: 35px;
+        height: 35px;
+        margin-left: 520px;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .dvprice img {
+        margin-top: 5px;
+    }
+</style>
+<div class="dvbooksdetail">
+    <div class="fl dvimg"><img src="@Model.ImgUrl" alt="" /></div>
+    <div class="fl ml60">
+        <div class="title">@Model.BookTitle</div>
+        <div class="item fl">
+            <span class="spleft fl">作者：</span><span class="spright rl">@Model.BookAuthor</span><br />
+            <span class="spleft fl">出版社：</span><span class="spright rl">@Model.Publisher.PublisherName</span><br />
+            <span class="spleft fl">出版社时间：</span><span class="spright rl">@(Model.PublishDate.ToString("yyyy-MM-dd"))</span>
+        </div>
+        <div class="item fl">
+            <span class="spleft fl">点击数：</span><span class="spright2 rl">@Model.Clicks</span><br />
+            <span class="spleft fl">ISBN：</span><span class="spright2 rl">@Model.Isbn</span><br />
+            <span class="spleft fl">字数：</span><span class="spright2 rl">@Model.WordsCount</span>
+        </div>
+        <div class="cl"></div>
+        <div class="dvprice">
+            <span class="spleft  fl">定价：￥</span><span class="spright fl">@(Math.Round(Model.UnitPrice, 2)) 元</span>
+            <span class="fl">&nbsp;<a href="javascript:void(0)" onclick="AddChart(@Model.BookId)"><img src="~/images/sale.gif" /></a></span>
+        </div>
+    </div>
+    <div class="cl line"></div>
+    <div class="line">
+        <span class="bold">内容提要：</span><br />
+        @Html.Raw(Model.ContentDescription)
+    </div>
+    <div class="line">
+        <span class="bold">作者简介：</span><br />
+        @Html.Raw(Model.AuthorDescription)
+    </div>
+    <div class="line">
+        <span class="bold">编辑推荐</span><br />
+        @Html.Raw(Model.EditorComment)
+    </div>
+    <div>
+        <span class="bold">目录：</span><br />
+        @Html.Raw(Model.Toc)
+    </div>
+</div>
+<div>
+    <a asp-action="BookList">返回图书列表</a>
+</div>
+<script type="text/javascript">
+    function AddChart(bookId) {
+        $.ajax({
+            url: "/Books/AddShoppingCart",
+            type: "post",
+            data: { BookID: bookId },
+            success: function (data) {
+                if(data.IntResult==0){
+                    $.messager.alert('错误', "用户信息失效，重新登录！", 'error',function(){
+                        window.location.href = "/Users/Login";
+                    });                    
+                }else if(data.IntResult==1){
+                    $.messager.show({
+                        title:'成功',
+                        msg:'购买《'+data.ResultData.BookTitle+'》成功！',
+                        timeout:1000,
+                        showType:'slide'
+                    });
+                }
+            }
+        });
+    }
+</script>

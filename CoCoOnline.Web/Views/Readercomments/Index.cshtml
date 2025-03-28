@@ -1,0 +1,206 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>读者推荐管理</title>
+    <link href="~/lib/easyui/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/icon.css" rel="stylesheet" />
+    <link href="~/lib/easyui/themes/color.css" rel="stylesheet" />
+    <script src="~/lib/easyui/jquery.min.js"></script>
+    <script src="~/lib/easyui/jquery.easyui.min.js"></script>
+    <script src="~/lib/easyui/easyui-lang-zh_cn.js"></script>
+</head>
+<body>
+    <table id="dg" title="搜索读者推荐列表" class="easyui-datagrid" style="width:1000px;"
+           url="/Readercomments/GetReadercommentList" toolbar=" #toolbar" pagination="true" method="get"
+           rownumbers="true" fitcolumns="true" selectOnCheck="true" checkOnSelect="true">
+        <thead>
+            <tr>
+                <th field="ck" checkbox="true"></th>
+                <th field="Id" width="30">推荐编号</th>
+                <th field="BookId" hidden="true" width="40">图书编号</th>
+                <th field="BookTitle" width="60">图书名称</th>
+                <th field="BookAuthor" width="50">作者</th>
+                <th field="UserId" hidden="true" width="40">读者编号</th>
+                <th field="UserName"  width="40">读者</th>
+                <th field="CommentTitle" width="60">推荐标题</th>
+                <th field="Comment" hidden="true" width="40">推荐内容</th>
+                <th field="Date" formatter="ChangeDateFormat" width="40">推荐日期</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="addInfo()">添加</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="editInfo()">编辑</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="deleteInfo()">删除</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input id="searname" class="easyui-searchbox" data-options="prompt:'请输入推荐标题或读者',searcher:doSearch" style="width:300px">
+    </div>
+
+    <div id="dlg" class="easyui-dialog" style="width:400px;height:420px;padding:10px 20px"
+         closed="true" buttons="#dlg-buttons">
+        <form id="fm" method="post" novalidate>
+            <input type="hidden" name="Id" />
+            <div class="fitem">
+                <label>图书名称:</label>
+                <input name="BookId" class="easyui-combobox" style="width: 164px"
+                       data-options="valueField:'BookId',textField:'BookTitle',editable:false,
+                    url:'/Books/GetBookTitle',required:true" />
+            </div>
+            <div class="fitem">
+                <label>读者:</label>
+                <input name="UserId" class="easyui-combobox" style="width: 164px"
+                       data-options="valueField:'UserId',textField:'UserName',editable:false,
+                    url:'/Users/GetUsersName',required:true" />
+            </div>
+            <div class="fitem">
+                <label>推荐标题:</label>
+                <input name="CommentTitle" class="easyui-textbox" required="true" />
+            </div>
+            <div class="fitem">
+                <label>推荐内容:</label>
+                <input name="Comment" class="easyui-textbox" multiline="true" style="height:100px" required="true" />
+            </div>
+            <div class="fitem">
+                <label>推荐日期:</label>
+                <input name="Date" class="easyui-datetimebox" required="true" />
+            </div>
+        </form>
+    </div>
+    <div id="dlg-buttons" style="text-align:center">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconcls="icon-ok" onclick="saveInfo()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $("#dg").datagrid({
+                onDblClickRow: function (index, row) {
+                    editInfo(index, row);
+                }
+            });
+        });
+        //搜索
+        function doSearch() {
+            $('#dg').datagrid('reload', {
+                searname: $('#searname').val()
+            });
+        }
+
+        var url;
+        //显示新增页面
+        function addInfo() {
+            $('#dlg').dialog('open').dialog('setTitle', '添加读者推荐');
+            $('#fm').form('clear');
+            url = '/Readercomments/Add';
+        }
+        //显示编辑页面
+        function editInfo(index, row) {
+            var row = $('#dg').datagrid('getSelected');
+            if (!row || row == undefined) {
+                $.messager.alert("提示", "请选择一个需要编辑的记录", "error");
+                return;
+            }
+            $('#dlg').dialog('open').dialog('setTitle', '编辑读者推荐');
+            $('#fm').form('load', row);
+            url = '/Readercomments/Edit/?id=' + row.Id;
+        }
+        //保存数据（包括新增和编辑）
+        function saveInfo() {
+            $('#fm').form('submit', {
+                url: url,
+                onSubmit: function () {
+                    return $(this).form('validate');
+                },
+                success: function (data) {
+                    if (JSON.parse(data).IntResult==-1) {
+                        $.messager.alert('错误', "保存失败！", 'error');
+                    } else if (JSON.parse(data).IntResult==1) {
+                        $.messager.alert('成功', "保存成功！", 'info');
+                        $('#dlg').dialog('close');
+                        $('#dg').datagrid('reload');
+                    }else if(JSON.parse(data).IntResult==0){
+                        $.messager.alert('错误', "保存失败！", 'error');
+                    }
+                }
+            });
+        }
+        //批量删除
+        function deleteInfo() {
+            var rows = $('#dg').datagrid('getSelections');
+            if (!rows || rows.length == 0) {
+                $.messager.alert('提示', '请选择要删除的记录', 'info');
+                return;
+            }
+            $.messager.confirm('确认', '确认要删除吗?', function (r) {
+                if (r) {
+                    var strId = "";
+                    for (var i = 0; i < rows.length; i++) {
+                        strId = strId + rows[i].Id + ",";
+                    }
+                    strId = strId.substring(0, strId.length - 1);
+                    $.post("/Readercomments/Delete", { "strId": strId }, function (data) {
+                        if (data.IntResult==1) {
+                            $('#dg').datagrid('reload');
+                            $('#dg').datagrid('clearSelections');
+                        }else if(data.IntResult==0){
+                            $.messager.alert('错误', "删除失败！", 'error');
+                        }
+                    });
+                }
+            });
+        }
+        //将序列化成json格式转成日期格式
+        function ChangeDateFormat(cellval) {
+            if (cellval == null) {
+                return;
+            }
+            var date = new Date(cellval.replace("T", " "));
+            var month = date.getMonth() < 10 ? "0" + (date.getMonth() ) : date.getMonth() ;
+            var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+            return date.getFullYear() + "-" + month + "-" + currentDate + " " + hours + ":" + minutes + ":" + seconds;
+        }
+    </script>
+    <style type="text/css">
+        #toolbar div {
+            float: left;
+            margin-right: 100px;
+            height: 30px;
+            padding-top: 5px;
+        }
+
+        #fm {
+            margin: 0;
+            padding: 10px 30px;
+        }
+
+        .ftitle {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .fitem {
+            margin-bottom: 5px;
+        }
+
+            .fitem label {
+                display: inline-block;
+                width: 80px;
+            }
+
+            .fitem input {
+                width: 160px;
+            }
+    </style>
+</body>
+</html>

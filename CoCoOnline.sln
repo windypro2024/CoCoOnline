@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35818.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCoOnline.Models", "CoCoOnline.Models\CoCoOnline.Models.csproj", "{119EED55-70A8-4054-35AE-FAE8AD6B356A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCoOnline.Repository", "CoCoOnline.Repository\CoCoOnline.Repository.csproj", "{5F522E3E-8BF9-318C-06F6-9608DF3598F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCoOnline.Service", "CoCoOnline.Service\CoCoOnline.Service.csproj", "{486C4360-C488-0096-AD9E-8237DB44E337}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCoOnline.Web", "CoCoOnline.Web\CoCoOnline.Web.csproj", "{D7B44AB6-D20C-4868-4E5F-E374FE70A846}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCoOnline.Uitles", "CoCoOnline.Uitles\CoCoOnline.Uitles.csproj", "{F992C040-F20F-C4A2-D04C-13E96F20CBA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCoOnline.API", "CoCoOnline.API\CoCoOnline.API.csproj", "{5D6D4B1A-422E-4915-AE6F-93C0B53A8431}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{119EED55-70A8-4054-35AE-FAE8AD6B356A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{119EED55-70A8-4054-35AE-FAE8AD6B356A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{119EED55-70A8-4054-35AE-FAE8AD6B356A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{119EED55-70A8-4054-35AE-FAE8AD6B356A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F522E3E-8BF9-318C-06F6-9608DF3598F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F522E3E-8BF9-318C-06F6-9608DF3598F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F522E3E-8BF9-318C-06F6-9608DF3598F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F522E3E-8BF9-318C-06F6-9608DF3598F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{486C4360-C488-0096-AD9E-8237DB44E337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{486C4360-C488-0096-AD9E-8237DB44E337}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{486C4360-C488-0096-AD9E-8237DB44E337}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{486C4360-C488-0096-AD9E-8237DB44E337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7B44AB6-D20C-4868-4E5F-E374FE70A846}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7B44AB6-D20C-4868-4E5F-E374FE70A846}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7B44AB6-D20C-4868-4E5F-E374FE70A846}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7B44AB6-D20C-4868-4E5F-E374FE70A846}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F992C040-F20F-C4A2-D04C-13E96F20CBA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F992C040-F20F-C4A2-D04C-13E96F20CBA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F992C040-F20F-C4A2-D04C-13E96F20CBA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F992C040-F20F-C4A2-D04C-13E96F20CBA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D6D4B1A-422E-4915-AE6F-93C0B53A8431}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D6D4B1A-422E-4915-AE6F-93C0B53A8431}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D6D4B1A-422E-4915-AE6F-93C0B53A8431}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D6D4B1A-422E-4915-AE6F-93C0B53A8431}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7A42CBC6-F03C-4A6F-A0B1-334648E271A2}
+	EndGlobalSection
+EndGlobal
